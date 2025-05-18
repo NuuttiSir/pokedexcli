@@ -1,4 +1,4 @@
-package pokeapi
+package pokecache
 
 import (
 	"sync"
@@ -15,8 +15,8 @@ type cacheEntry struct {
 	val       []byte
 }
 
-func NewCache(interval time.Duration) *Cache {
-	newC := &Cache{
+func NewCache(interval time.Duration) Cache {
+	newC := Cache{
 		cache: make(map[string]cacheEntry),
 		mux:   &sync.Mutex{},
 	}
@@ -42,7 +42,14 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 	return entry.val, ok
 }
 
-func (c *Cache) reapLoop(now time.Time, last time.Duration) {
+func (c *Cache) reapLoop(interval time.Duration) {
+	ticker := time.NewTicker(interval)
+	for range ticker.C {
+		c.reap(time.Now().UTC(), interval)
+	}
+}
+
+func (c *Cache) reap(now time.Time, last time.Duration) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	for k, v := range c.cache {

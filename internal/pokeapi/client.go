@@ -1,9 +1,10 @@
 package pokeapi
 
 import (
-	"github.com/nuuttisir/pokedexcli/internal/pokecache"
 	"net/http"
 	"time"
+
+	"github.com/nuuttisir/pokedexcli/internal/pokecache"
 )
 
 // Client -
